@@ -13,13 +13,10 @@ public abstract class Book {
 
     public Book(String pathFile){
         this.pathFile = pathFile;
-        icon = new Image("defaultIcon.png");
+        icon = new Image("book.png");
     }
     public Image getIcon() {
         return icon;
-    }
-    public void setIcon(Image icon) {
-        this.icon = icon;
     }
     public String getPathFile() {
         return pathFile;
@@ -28,6 +25,7 @@ public abstract class Book {
     public String toString(){
         return "\nTitle: "+this.getTitle()
                 +"\nAuthor: "+ this.getAuthor()
+                +"\nDate:"+this.getDate()
                 +"\nPages: "+ this.getTotalPage()
                 +"\nPathFile: "+this.getPathFile();
     }

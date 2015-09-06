@@ -1,7 +1,11 @@
+import javafx.scene.image.Image;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+
 import java.io.IOException;
 import java.util.Date;
+import java.util.Objects;
+
 /**
  * @author Francesco
  * Created by Francesco on 06/09/2015.
@@ -9,9 +13,15 @@ import java.util.Date;
 public class Pdf extends Book {
     private PDDocument doc;
     private PDDocumentInformation info;
+    private Image icon;
+
+    /**
+     * @param pdfPath an absolute or relative string location where is located the pdf file
+     */
     public Pdf(String pdfPath) {
         super(pdfPath);
         try {
+            icon = new Image("pdf.png");
             doc = PDDocument.load(pdfPath);
             info = doc.getDocumentInformation();
         }catch (IOException e){
@@ -21,22 +31,42 @@ public class Pdf extends Book {
     }
 
     @Override
-    String getAuthor() {
+    public String getAuthor() {
+        if (info.getAuthor() == null || Objects.equals(info.getAuthor(),"")){
+            return "Unknown";
+        }
         return info.getAuthor();
     }
 
     @Override
-    String getTitle() {
+    public String getTitle() {
+        if (info.getTitle() == null || Objects.equals(info.getTitle(),"")){
+            return "Unknown";
+        }
         return info.getTitle();
     }
 
     @Override
-    Date getDate() {
-        return null;
+    public Date getDate() {
+        try {
+            return info.getCreationDate().getTime();
+/*          quando la stampo...
+            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+            String data = format.format(Book.getDate());
+*/
+        }catch (IOException e){
+            System.err.println("Pdf.getDate() Method Failed");
+            return null;
+        }
     }
 
     @Override
-    int getTotalPage() {
+    public Image getIcon() {
+        return icon;
+    }
+
+    @Override
+    public int getTotalPage() {
         return doc.getNumberOfPages();
     }
 }

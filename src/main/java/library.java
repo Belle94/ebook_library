@@ -1,3 +1,6 @@
+import java.io.File;
+import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -16,6 +19,10 @@ public class Library {
     public Vector<Book> getCollection(){
         return collection;
     }
+
+    /**
+     * Print the complete collection in standard output.
+     */
     public void stamp(){
         int i = 1;
         System.out.println("###### EBOOK LIBRARY ######");
