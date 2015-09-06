@@ -1,7 +1,7 @@
 import javafx.scene.image.Image;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
@@ -22,7 +22,7 @@ public class Pdf extends Book {
         super(pdfPath);
         try {
             icon = new Image("pdf.png");
-            doc = PDDocument.load(pdfPath);
+            doc = PDDocument.load(new File(pdfPath));
             info = doc.getDocumentInformation();
         }catch (IOException e){
             System.out.println("\n[ERROR] Message: "+e.getMessage());
@@ -50,14 +50,14 @@ public class Pdf extends Book {
     public Date getDate() {
         try {
             return info.getCreationDate().getTime();
-/*          quando la stampo...
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        /*  quando la stampo...
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
             String data = format.format(Book.getDate());
-*/
-        }catch (IOException e){
-            System.err.println("Pdf.getDate() Method Failed");
-            return null;
-        }
+        */
+        return null;
     }
 
     @Override
