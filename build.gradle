@@ -1,4 +1,4 @@
-group 'com.belle94.ebook_library'
+group 'github.com.Belle94'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'

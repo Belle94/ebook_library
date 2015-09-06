@@ -1,10 +1,11 @@
 import javafx.geometry.*;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
@@ -16,29 +17,27 @@ import java.util.Vector;
 
 
 /**
- * Created by Francesco on 05/09/2015.
+ * @author Francesco
+ * Created on 05/09/2015.
  */
 public class Gui {
-
     private BorderPane borderPane;
     private VBox vBox;
     private FlowPane flowPane;
-    private Button buttonAdd, buttonEdit, buttonRemove, buttonSave, buttonLoad, buttonPrint;
     private Label labelSearch, labelFunctions, labelTitle, labelFooter;
     private TextField textField;
-    private Double prefWidth = 580.0;
-    private Double prefHeight = 420.0;
+    private double prefWidth = 580.0;
+    private double prefHeight = 420.0;
+
     public Gui(){
         settingLabels();
         settingVbox();
         settingFlow();
         settingRootElement();
     }
-
     public Pane getRootElement(){
         return borderPane;
     }
-
     public void settingVbox(){
         vBox= new VBox();
         vBox.setPrefSize(prefWidth * 0.26, prefHeight * 0.84);
@@ -64,9 +63,45 @@ public class Gui {
         flowPane.setColumnHalignment(HPos.LEFT);
         flowPane.setRowValignment(VPos.CENTER);
         flowPane.setPrefSize(prefWidth * 0.74, prefHeight * 0.84);
-        flowPane.setStyle("-fx-background-color: #000000; -fx-border-color: #515051");
+        flowPane.setVgap(15.0);
+        flowPane.setHgap(15.0);
+        flowPane.setStyle("-fx-background-color: #000000; -fx-border-color: #515051; -fx-padding: 15px;");
     }
 
+    public void refreshLibrary(Vector<Book> library){
+        for (Book book : library){
+            Node node = CreatePane(book);
+            flowPane.getChildren().add(node);
+        }
+    }
+
+    public Node CreatePane(Book book){
+        double height = 250.0, width = 100.0;
+        VBox pane = new VBox();
+        ImageView imageView = new ImageView();
+        Label labelTitleBook = new Label("Unknown");
+        Label labelAuthorBook = new Label("Unknown");
+        if (book.getTitle() != null){
+            labelTitleBook.setText(book.getTitle());
+        }
+        if (book.getAuthor() != null){
+            labelAuthorBook.setText(book.getAuthor());
+        }
+        labelTitleBook.setPrefSize(width, height * 0.10);
+        labelTitleBook.setTextFill(Color.web("#ffffff"));
+        labelAuthorBook.setPrefSize(width, height * 0.10);
+        labelAuthorBook.setTextFill(Color.web("#414041"));
+        imageView.setImage(book.getIcon());
+        imageView.setFitHeight(height * 0.80);
+        imageView.setFitWidth(width);
+        imageView.setPickOnBounds(true);
+        imageView.setPreserveRatio(true);
+        pane.setPrefSize(width, height);
+        pane.getChildren().add(imageView);
+        pane.getChildren().add(labelTitleBook);
+        pane.getChildren().add(labelAuthorBook);
+        return pane;
+    }
     public void settingRootElement(){
         borderPane = new BorderPane();
         borderPane.setStyle("-fx-background-color: #000000;");
@@ -100,9 +135,9 @@ public class Gui {
         labelFunctions.setTextAlignment(TextAlignment.LEFT);
         labelFunctions.setAlignment(Pos.BOTTOM_LEFT);
         labelFunctions.setPrefSize(prefWidth*0.26, 30.0);
-
     }
     public ArrayList<Button> settingButton(){
+        Button buttonAdd, buttonEdit, buttonRemove, buttonSave, buttonLoad, buttonPrint;
         buttonAdd = new Button("Add");
         buttonEdit = new Button("Edit");
         buttonRemove = new Button("Remove");

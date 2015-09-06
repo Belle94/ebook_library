@@ -1,0 +1,6 @@
+.gradle/*
+.idea/*
+build/*
+ebook_library.iml
+ebook_library.iws
+ebook_library.ipr
