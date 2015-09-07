@@ -4,7 +4,6 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -14,26 +13,27 @@ import java.util.Objects;
 public class Pdf extends Book {
     private Image icon;
     private String author, title;
-    private Date date;
+    private String date;
     private int totalPage;
 
     /**
-     * @param pdfPath an absolute or relative string location where is located the pdf file
+     * @param filePdf pdf file
      */
-    public Pdf(String pdfPath) {
-        super(pdfPath);
+    public Pdf(File filePdf) {
+        super(filePdf);
         try {
             icon = new Image("pdf.png");
-            PDDocument doc = PDDocument.load( new File(pdfPath));
+            PDDocument doc = PDDocument.load(filePdf);
             PDDocumentInformation info = doc.getDocumentInformation();
             author = info.getAuthor();
             title = info.getTitle();
-            date = info.getCreationDate().getTime();
+            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+            date = format.format(info.getCreationDate().getTime());
             totalPage = doc.getNumberOfPages();
-            if  (info.getTitle() == null || Objects.equals(info.getTitle(),"")){
+            if (info.getTitle() == null || Objects.equals(info.getTitle(), "")) {
                 title = "no-name";
             }
-            if (info.getAuthor() == null || Objects.equals(info.getAuthor(),"")){
+            if (info.getAuthor() == null || Objects.equals(info.getAuthor(), "")) {
                 author = "no-name";
             }
             doc.close();
@@ -51,11 +51,7 @@ public class Pdf extends Book {
         return title;
     }
     @Override
-    public Date getDate() {
-        /*  quando la stampo...
-            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-            String data = format.format(Book.getDate());
-        */
+    public String getDate() {
         return date;
     }
     @Override

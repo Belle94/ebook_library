@@ -1,6 +1,6 @@
 import javafx.scene.image.Image;
 
-import java.util.Date;
+import java.io.File;
 
 /**
  * @author Francesco
@@ -8,31 +8,31 @@ import java.util.Date;
  */
 public abstract class Book {
 
-    private String pathFile;
+    private File file;
     private Image icon;
 
-    public Book(String pathFile){
-        this.pathFile = pathFile;
+    public Book(File file){
+        this.file = file;
         icon = new Image("book.png");
     }
     public Image getIcon() {
         return icon;
     }
-    public String getPathFile() {
-        return pathFile;
+    public String getFilePath() {
+        return file.getAbsolutePath();
     }
     @Override
     public String toString(){
         return "\nTitle: "+this.getTitle()
                 +"\nAuthor: "+ this.getAuthor()
-                +"\nDate:"+this.getDate()
+                +"\nDate: "+this.getDate()
                 +"\nPages: "+ this.getTotalPage()
-                +"\nPathFile: "+this.getPathFile();
+                +"\nPathFile: "+this.getFilePath();
     }
 
     public abstract String getAuthor();
     public abstract String getTitle();
-    public abstract Date getDate();
+    public abstract String getDate();
     public abstract int getTotalPage();
 
 }

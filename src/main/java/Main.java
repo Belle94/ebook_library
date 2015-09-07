@@ -1,20 +1,22 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  *
  * @author Francesco
  */
 public class Main extends Application {
-    Library library;
 
     @Override
     public void start(Stage stage) throws Exception {
-        library = new Library();
-        Gui gui = new Gui(library);
+        Gui gui = new Gui();
         stage.setTitle("Ebook Library");
-        stage.setScene(new Scene(gui.getRootElement()));
+        Scene scene = new Scene(gui.getRootElement());
+        scene.setFill(Color.TRANSPARENT);
+        stage.setScene(scene);
         stage.show();
     }
 

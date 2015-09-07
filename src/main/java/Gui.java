@@ -11,7 +11,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,9 +27,11 @@ public class Gui {
     private double prefWidth = 580.0;
     private double prefHeight = 420.0;
     private Library library;
+    private Book selectedBook;
+    private Pane selectedPane;
 
-    public Gui(Library library){
-        this.library = library;
+    public Gui(){
+        library = new Library();
         settingLabels();
         settingVbox();
         settingFlow();
@@ -50,6 +51,9 @@ public class Gui {
         vBox.getChildren().add(textField);
         vBox.getChildren().add(labelFunctions);
         vBox.getChildren().addAll(settingButton());
+        vBox.setOnMouseClicked(event -> {
+            updatePaneGui(null);
+        });
     }
     public void settingScrollPane(){
         scrollPane = new ScrollPane();
@@ -62,9 +66,9 @@ public class Gui {
         textField = new TextField();
         textField.setPromptText("Title or Keyword");
         textField.setFont(Font.font("Arial", 12));
-        textField.setStyle("-fx-background-color: #212021; -fx-border-color: #515051; -fx-border-radius: 3px; -fx-border-width: 2px;");
+        textField.setStyle("-fx-background-color: #212021; -fx-border-color: #515051; -fx-border-radius: 3px; -fx-border-width: 2px; -fx-text-fill: #ffffff");
     }
-    public void settingFlow(){
+    public void settingFlow() {
         flowPane = new FlowPane();
         flowPane.setAlignment(Pos.TOP_LEFT);
         flowPane.setNodeOrientation(NodeOrientation.INHERIT);
@@ -82,29 +86,46 @@ public class Gui {
     /**
      * Polymorphism in the follow class... the same line of code
      * works for every extension, doesn't mean is pdf or ePub.
+     * @param book
      */
     public Node CreatePane(Book book){
-        double height = 120, width = 80.0;
+        double height = book.getIcon().getHeight();
+        double width = book.getIcon().getWidth();
         VBox pane = new VBox();
         ImageView imageView = new ImageView();
         Label labelTitleBook = new Label(book.getTitle());
         Label labelAuthorBook = new Label(book.getAuthor());
         labelTitleBook.setPrefSize(width, height * 0.10);
         labelTitleBook.setTextFill(Color.web("#ffffff"));
+        labelTitleBook.setTranslateX(5);
         labelAuthorBook.setPrefSize(width, height * 0.10);
         labelAuthorBook.setTextFill(Color.web("#414041"));
+        labelAuthorBook.setTranslateX(5);
         imageView.setImage(book.getIcon());
-        imageView.setFitHeight(height * 0.70);
+        imageView.setFitHeight(height);
         imageView.setFitWidth(width);
         imageView.setPickOnBounds(true);
         imageView.setPreserveRatio(true);
-        pane.setPrefSize(width, height);
-        pane.setMaxSize(width, height);
+        pane.setPrefSize(width, height + height *0.20);
         pane.getChildren().add(imageView);
         pane.getChildren().add(labelTitleBook);
         pane.getChildren().add(labelAuthorBook);
+        pane.setOnMouseClicked(event -> updatePaneGui(pane));
         return pane;
     }
+
+    public void updatePaneGui(Pane pane){
+        Pane prcSelectedPane = selectedPane;
+        selectedPane = pane;
+        if (selectedPane != null)
+            selectedPane.setStyle("-fx-background-color: rgba(75, 74, 75, 0.3);");
+        if (prcSelectedPane != null) {
+            prcSelectedPane.setStyle("-fx-background-color: transparent;");
+            if (prcSelectedPane == selectedPane)
+                selectedPane = null;
+        }
+    }
+
     public void settingRootElement(){
         borderPane = new BorderPane();
         borderPane.setStyle("-fx-background-color: #000000;");
@@ -166,6 +187,8 @@ public class Gui {
             b.setStyle("-fx-background-color: #414041; -fx-border-color: #525052; -fx-border-width: 2px; -fx-border-radius: 2px;");
             b.setPrefSize(prefWidth * 0.24, 28.0);
             b.setNodeOrientation(NodeOrientation.INHERIT);
+            b.setOnMouseEntered(event -> b.setStyle("-fx-background-color: #525052; -fx-border-color: #414041; -fx-border-width: 2px; -fx-border-radius: 2px;"));
+            b.setOnMouseExited(event -> b.setStyle("-fx-background-color: #414041; -fx-border-color: #525052; -fx-border-width: 2px; -fx-border-radius: 2px;"));
         }
         return buttonsVbox;
     }
@@ -173,39 +196,24 @@ public class Gui {
         FileChooser fs = new FileChooser();
         fs.setTitle("Choose one or more Books");
         fs.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Pdf Files", "*.pdf"),
+                new FileChooser.ExtensionFilter("All Files", "*.*"),
                 new FileChooser.ExtensionFilter("EPub Files", "*.epub"),
                 new FileChooser.ExtensionFilter("Html Files", "*.html"),
                 new FileChooser.ExtensionFilter("Mobi Files", "*.mobi"),
-                new FileChooser.ExtensionFilter("All Files", "*.*"));
-
+                new FileChooser.ExtensionFilter("Pdf Files", "*.pdf"));
         List<File> listFiles = fs.showOpenMultipleDialog(new Stage());
-        listFiles.stream().filter(f -> f != null).forEach(f -> {
-            Book book = null;
-            if (f.getAbsolutePath().endsWith(".pdf") || f.getAbsolutePath().endsWith(".PDF")) {
-                book = new Pdf(f.getAbsolutePath());
-            } else {
-                book = new Book(f.getAbsolutePath()) {
-                    @Override
-                    public String getAuthor() {
-                        return "Unknown";
-                    }
-                    @Override
-                    public String getTitle() {
-                        return "Unknown";
-                    }
-                    @Override
-                    public Date getDate() {
-                        return null;
-                    }
-                    @Override
-                    public int getTotalPage() {
-                        return 0;
-                    }
-                };
-            }
-            library.addBook(book);
-            addBookToGui(book);
-        });
+        try {
+            listFiles.stream().filter(f -> f != null).forEach(f -> {
+                Book book = null;
+                if (f.getAbsolutePath().endsWith(".pdf") || f.getAbsolutePath().endsWith(".PDF"))
+                    book = new Pdf(f);
+                else if (f.getAbsolutePath().endsWith(".epub") || f.getAbsolutePath().endsWith(".EPUB"))
+                    book = new EPub(f);
+                else
+                    book = new UnknownBook(f, "Unknown", "Unknown");
+                library.addBook(book);
+                addBookToGui(book);
+            });
+        }catch (NullPointerException e){}
     }
 }
