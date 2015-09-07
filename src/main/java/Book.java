@@ -30,9 +30,9 @@ public abstract class Book {
                 +"\nPathFile: "+this.getPathFile();
     }
 
-    abstract String getAuthor();
-    abstract String getTitle();
-    abstract Date getDate();
-    abstract int getTotalPage();
+    public abstract String getAuthor();
+    public abstract String getTitle();
+    public abstract Date getDate();
+    public abstract int getTotalPage();
 
 }

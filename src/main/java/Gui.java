@@ -187,19 +187,19 @@ public class Gui {
             } else {
                 book = new Book(f.getAbsolutePath()) {
                     @Override
-                    String getAuthor() {
+                    public String getAuthor() {
                         return "Unknown";
                     }
                     @Override
-                    String getTitle() {
+                    public String getTitle() {
                         return "Unknown";
                     }
                     @Override
-                    Date getDate() {
+                    public Date getDate() {
                         return null;
                     }
                     @Override
-                    int getTotalPage() {
+                    public int getTotalPage() {
                         return 0;
                     }
                 };
