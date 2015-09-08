@@ -38,8 +38,8 @@ public class Pdf extends Book {
             }
             doc.close();
         } catch (IOException e) {
-            System.out.println("\n[ERROR] Message: " + e.getMessage());
-            System.out.println("\n[ERROR] Cause: " + e.getCause());
+            System.out.println("[ERROR] Message: " + e.getMessage());
+            System.out.println("[ERROR] Cause: " + e.getCause());
         }
     }
     @Override

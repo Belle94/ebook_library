@@ -184,6 +184,7 @@ public class Gui {
         buttonPrint = new Button("Print");
         buttonAdd.setOnAction(event -> configAddButton());
         buttonPrint.setOnAction(event -> library.stamp());
+        buttonEdit.setOnAction(event1 -> new EditGui(prcBook));
         ArrayList<Button> buttonsVbox = new ArrayList<>();
         buttonsVbox.add(buttonAdd);
         buttonsVbox.add(buttonEdit);

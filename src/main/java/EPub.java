@@ -29,7 +29,7 @@ public class EPub extends Book {
             if (author.equals(""))
                 author = "no-name";
         }catch (IOException e){
-            System.err.println("\n[Error] readEpub can't load file");
+            System.err.println("[Error] readEpub can't load file");
             e.printStackTrace();
         }
     }
