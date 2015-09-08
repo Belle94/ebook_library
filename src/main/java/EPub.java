@@ -4,7 +4,6 @@ import nl.siegmann.epublib.epub.EpubReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 /**
  * Created by Francesco on 07/09/2015.
