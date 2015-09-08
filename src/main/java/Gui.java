@@ -93,18 +93,21 @@ public class Gui {
      * @param book
      */
     public Pane CreatePane(Book book){
+        double transx = 5;
         double height = book.getIcon().getHeight();
-        double width = book.getIcon().getWidth();
+        double width = book.getIcon().getWidth() + transx;
         VBox pane = new VBox();
         ImageView imageView = new ImageView();
         Label labelTitleBook = new Label(book.getTitle());
         Label labelAuthorBook = new Label(book.getAuthor());
         labelTitleBook.setPrefSize(width, height * 0.10);
         labelTitleBook.setTextFill(Color.web("#ffffff"));
-        labelTitleBook.setTranslateX(5);
+        labelTitleBook.setTranslateX(transx);
+        labelTitleBook.setMaxWidth(width - transx);
         labelAuthorBook.setPrefSize(width, height * 0.10);
         labelAuthorBook.setTextFill(Color.web("#414041"));
-        labelAuthorBook.setTranslateX(5);
+        labelAuthorBook.setTranslateX(transx);
+        labelAuthorBook.setMaxWidth(width - transx);
         imageView.setImage(book.getIcon());
         imageView.setFitHeight(height);
         imageView.setFitWidth(width);
