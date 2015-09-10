@@ -5,8 +5,7 @@ import java.io.File;
  * Created by Francesco on 07/09/2015.
  */
 public class UnknownBook extends Book {
-    public String defaultString;
-    public String defaultDate;
+    private String title, author, date;
 
     /**
      *
@@ -24,35 +23,36 @@ public class UnknownBook extends Book {
      */
     public UnknownBook(File file, String defaultString, String defaultDate){
         this(file);
-        setDefaultDate(defaultDate);
-        setDefaultString(defaultString);
-    }
-
-    public void setDefaultString(String defaultString) {
-        this.defaultString = defaultString;
-    }
-
-    public void setDefaultDate(String stringDate){
-        this.defaultDate = stringDate;
+        setTitle(defaultString);
+        setAuthor(defaultString);
+        setDate(defaultDate);
     }
 
     @Override
     public String getAuthor() {
-        return defaultString;
+        return author;
     }
-
     @Override
     public String getTitle() {
-        return defaultString;
+        return title;
     }
-
     @Override
     public String getDate() {
-        return defaultDate;
+        return date;
     }
-
     @Override
     public int getTotalPage() {
         return 0;
+    }
+    @Override
+    public void setTitle(String title){
+        this.title = title;
+    }
+    @Override
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+    public void setDate(String date) {
+        this.date = date;
     }
 }

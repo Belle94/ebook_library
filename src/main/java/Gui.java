@@ -1,6 +1,8 @@
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -27,9 +29,10 @@ public class Gui {
     private double prefWidth = 580.0;
     private double prefHeight = 420.0;
     private Library library;
-    private Book prcBook;
+    private Book prcBook= null;
+    private boolean infoBookWindow = false;
 
-    public Gui(){
+    public Gui() {
         library = new Library();
         settingLabels();
         settingVbox();
@@ -37,11 +40,13 @@ public class Gui {
         settingScrollPane();
         settingRootElement();
     }
-    public Pane getRootElement(){
+
+    public Pane getRootElement() {
         return borderPane;
     }
-    public void settingVbox(){
-        vBox= new VBox();
+
+    public void settingVbox() {
+        vBox = new VBox();
         vBox.setPrefSize(prefWidth * 0.26, prefHeight * 0.84);
         vBox.setStyle("-fx-background-color: #272527; -fx-spacing: 10px; -fx-border-width: 1px; -fx-border-color: #505150; -fx-padding: 5px;");
         vBox.setAlignment(Pos.TOP_LEFT);
@@ -52,20 +57,23 @@ public class Gui {
         vBox.getChildren().addAll(settingButton());
         vBox.setOnMouseClicked(event -> updateBookSelected(null));
     }
-    public void settingScrollPane(){
+
+    public void settingScrollPane() {
         scrollPane = new ScrollPane();
         scrollPane.setPrefSize(prefWidth * 0.74, prefHeight * 0.84);
         scrollPane.setStyle("-fx-padding: 0; -fx-border-color: #515051; -fx-background-insets: 0; -fx-background: #000000; -fx-hbar-policy: never;");
         scrollPane.setFitToWidth(true);
         scrollPane.setContent(flowPane);
     }
-    public void settingTextField(){
+
+    public void settingTextField() {
         textField = new TextField();
-        textField.setPromptText("Title or Keyword");
+        textField.setPromptText("Title or Author");
         textField.setFont(Font.font("Arial", 12));
         textField.setStyle("-fx-background-color: #212021; -fx-border-color: #515051; -fx-border-radius: 3px; -fx-border-width: 2px; -fx-text-fill: #ffffff");
-        textField.setOnKeyTyped(event -> configSearchText());
+        textField.setOnKeyReleased(this::settingSearchText);
     }
+
     public void settingFlow() {
         flowPane = new FlowPane();
         flowPane.setAlignment(Pos.TOP_LEFT);
@@ -77,22 +85,41 @@ public class Gui {
         flowPane.setHgap(20.0);
         flowPane.setStyle("-fx-background-color: #000000; -fx-padding: 15px;");
     }
-    public void addBookToGui(Book book){
+
+    public void showInfoBookWindow(){
+        if (prcBook != null && !infoBookWindow) {
+            infoBookWindow = true;
+            new EditGui(prcBook,this).getStage().showAndWait();
+            infoBookWindow = false;
+        }
+    }
+
+    public void addBookToGui(Book book) {
         book.setPane(CreatePane(book));
         flowPane.getChildren().add(book.getPane());
     }
-    public void addBooksToGui(Vector<Book> vectorBook){
+
+    public void removeBookToGui(Book book){
+        if(flowPane.getChildren().contains(book.getPane()))
+            flowPane.getChildren().remove(book.getPane());
+    }
+
+    public void addBooksToGui(Vector<Book> vectorBook) {
         vectorBook.forEach(this::addBookToGui);
     }
-    public void clearGui(){
+
+    public void clearGui() {
         flowPane.getChildren().clear();
     }
+
     /**
      * Polymorphism in the follow class... the same line of code
      * works for every extension, doesn't mean is pdf or ePub.
-     * @param book
+     *
+     * @param book the book will have its own Pan
+     * @return the Pane witch its propriety
      */
-    public Pane CreatePane(Book book){
+    public Pane CreatePane(Book book) {
         double transx = 5;
         double height = book.getIcon().getHeight();
         double width = book.getIcon().getWidth() + transx;
@@ -120,33 +147,39 @@ public class Gui {
         pane.setOnMouseClicked(event -> updateBookSelected(book));
         return pane;
     }
+
     public void updateBookSelected(Book slcBook) {
         if (prcBook != null && slcBook != null && prcBook != slcBook) {
             prcBook.getPane().setStyle("-fx-background-color: transparent;");
             slcBook.getPane().setStyle("-fx-background-color: rgba(75, 74, 75, 0.3);");
             prcBook = slcBook;
-        } else if (slcBook!= null && prcBook == slcBook){
+        } else if (slcBook != null && prcBook == slcBook) {
             prcBook.getPane().setStyle("-fx-background-color: transparent;");
             prcBook = null;
         } else if (slcBook == null && prcBook != null) {
             prcBook.getPane().setStyle("-fx-background-color: transparent;");
             prcBook = null;
-        } else if (slcBook != null){
+        }else  if (slcBook == null){
+            prcBook = null;
+        } else {
             slcBook.getPane().setStyle("-fx-background-color: rgba(75, 74, 75, 0.3);");
             prcBook = slcBook;
         }
     }
-    public void settingRootElement(){
+
+    public void settingRootElement() {
         borderPane = new BorderPane();
         borderPane.setStyle("-fx-background-color: #000000;");
-        borderPane.setAlignment(labelTitle, Pos.CENTER);
-        borderPane.setAlignment(labelFooter, Pos.CENTER);
+        BorderPane.setAlignment(labelTitle, Pos.CENTER);
+        BorderPane.setAlignment(labelFooter, Pos.CENTER);
         borderPane.setTop(labelTitle);
         borderPane.setBottom(labelFooter);
         borderPane.setLeft(vBox);
         borderPane.setCenter(scrollPane);
+        borderPane.setOnKeyTyped(event -> showInfoBookWindow());
     }
-    public void settingLabels(){
+
+    public void settingLabels() {
         labelTitle = new Label("Ebook Library");
         labelTitle.setTextFill(Color.web("#ffffff"));
         labelTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
@@ -160,7 +193,7 @@ public class Gui {
         labelFooter.setAlignment(Pos.CENTER);
         labelFooter.setOnMouseClicked(event -> updateBookSelected(null));
         labelSearch = new Label("Search");
-        labelSearch.setFont(Font.font("Arial", FontWeight.BOLD,20));
+        labelSearch.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         labelSearch.setTextFill(Color.web("#ebc31c"));
         labelSearch.setTextAlignment(TextAlignment.LEFT);
         labelSearch.setAlignment(Pos.BOTTOM_LEFT);
@@ -174,7 +207,8 @@ public class Gui {
         labelFunctions.setPrefSize(prefWidth * 0.26, 30.0);
         labelFunctions.setOnMouseClicked(event -> updateBookSelected(null));
     }
-    public ArrayList<Button> settingButton(){
+
+    public ArrayList<Button> settingButton() {
         Button buttonAdd, buttonEdit, buttonRemove, buttonSave, buttonLoad, buttonPrint;
         buttonAdd = new Button("Add");
         buttonEdit = new Button("Edit");
@@ -182,9 +216,10 @@ public class Gui {
         buttonSave = new Button("Save");
         buttonLoad = new Button("Load");
         buttonPrint = new Button("Print");
-        buttonAdd.setOnAction(event -> configAddButton());
+        buttonAdd.setOnAction(event -> settingAddButton());
         buttonPrint.setOnAction(event -> library.stamp());
-        buttonEdit.setOnAction(event1 -> new EditGui(prcBook));
+        buttonEdit.setOnAction(event -> showInfoBookWindow());
+        buttonRemove.setOnAction(event -> settingRemoveBook());
         ArrayList<Button> buttonsVbox = new ArrayList<>();
         buttonsVbox.add(buttonAdd);
         buttonsVbox.add(buttonEdit);
@@ -192,8 +227,8 @@ public class Gui {
         buttonsVbox.add(buttonSave);
         buttonsVbox.add(buttonLoad);
         buttonsVbox.add(buttonPrint);
-        for (Button b : buttonsVbox){
-            b.setFont(Font.font("Arial",FontWeight.BOLD,14));
+        for (Button b : buttonsVbox) {
+            b.setFont(Font.font("Arial", FontWeight.BOLD, 14));
             b.setAlignment(Pos.TOP_LEFT);
             b.setTextAlignment(TextAlignment.LEFT);
             b.setTextFill(Color.web("#ffffff"));
@@ -205,9 +240,18 @@ public class Gui {
         }
         return buttonsVbox;
     }
-    public void configAddButton(){
+
+    public void settingRemoveBook(){
+        if (prcBook != null){
+            library.removeBook(prcBook);
+            removeBookToGui(prcBook);
+        }
+    }
+
+    public void settingAddButton() {
         FileChooser fs = new FileChooser();
         fs.setTitle("Choose one or more Books");
+        fs.setInitialDirectory(new File(System.getProperty("user.home")));
         fs.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("All Files", "*.*"),
                 new FileChooser.ExtensionFilter("EPub Files", "*.epub"),
@@ -215,44 +259,36 @@ public class Gui {
                 new FileChooser.ExtensionFilter("Mobi Files", "*.mobi"),
                 new FileChooser.ExtensionFilter("Pdf Files", "*.pdf"));
         List<File> listFiles = fs.showOpenMultipleDialog(new Stage());
-        try {
+        if (listFiles != null)
             listFiles.stream().filter(f -> f != null).forEach(f -> {
-                Book book = null;
-                if (f.getAbsolutePath().endsWith(".pdf") || f.getAbsolutePath().endsWith(".PDF"))
-                    book = new Pdf(f);
-                else if (f.getAbsolutePath().endsWith(".epub") || f.getAbsolutePath().endsWith(".EPUB"))
-                    book = new EPub(f);
-                else
-                    book = new UnknownBook(f, "Unknown", "Unknown");
+                Book book = Book.getExstension(f);
                 library.addBook(book);
                 addBookToGui(book);
             });
-        }catch (NullPointerException e){}
     }
-    public void configSearchText(){
-        if (!library.getCollection().isEmpty()){
-            if (!textField.getText().equals("") ){
+
+    public void settingSearchText(KeyEvent event) {
+        if (!library.getCollection().isEmpty()) {
+            if (!textField.getText().equals("")) {
                 updateBookSelected(null);
                 clearGui();
                 boolean firstBookFound = true;
-                int i = 0;
                 for (Book book : library.getCollection()) {
                     if (book.getAuthor().toLowerCase().contains(textField.getText().toLowerCase())
                             || book.getTitle().toLowerCase().contains(textField.getText().toLowerCase())) {
                         addBookToGui(book);
-                        if (firstBookFound){
+                        if (firstBookFound) {
                             updateBookSelected(book);
                             firstBookFound = false;
                         }
                     }
                 }
-            }else{
+                if (KeyCode.ENTER == event.getCode())
+                    showInfoBookWindow();
+            } else {
                 clearGui();
                 addBooksToGui(library.getCollection());
             }
         }
     }
-
-
-
 }

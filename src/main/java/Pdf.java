@@ -1,6 +1,9 @@
 import javafx.scene.image.Image;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.common.PDMetadata;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -38,6 +41,7 @@ public class Pdf extends Book {
             }
             doc.close();
         } catch (IOException e) {
+            System.out.println("[ERROR] Pdf not added");
             System.out.println("[ERROR] Message: " + e.getMessage());
             System.out.println("[ERROR] Cause: " + e.getCause());
         }
@@ -61,5 +65,37 @@ public class Pdf extends Book {
     @Override
     public int getTotalPage() {
         return totalPage;
+    }
+    @Override
+    public void setTitle(String title){
+        try {
+            PDDocument doc = PDDocument.load(getFilePath());
+            PDDocumentInformation info = doc.getDocumentInformation();
+            info.setTitle(title);
+            doc.setDocumentInformation(info);
+            this.title = title;
+            doc.save(new File(getFilePath()));
+            doc.close();
+        }catch (IOException | COSVisitorException e){
+            System.out.println("[ERROR] Pdf not changed");
+            System.out.println("[ERROR] Message: " + e.getMessage());
+            System.out.println("[ERROR] Cause: " + e.getCause());
+        }
+    }
+    @Override
+    public void setAuthor(String author){
+        try {
+            PDDocument doc = PDDocument.load(getFilePath());
+            PDDocumentInformation info = doc.getDocumentInformation();
+            info.setAuthor(author);
+            doc.setDocumentInformation(info);
+            this.author = author;
+            doc.save(new File(getFilePath()));
+            doc.close();
+        }catch (IOException | COSVisitorException e){
+            System.out.println("[ERROR] Pdf not changed");
+            System.out.println("[ERROR] Message: " + e.getMessage());
+            System.out.println("[ERROR] Cause: " + e.getCause());
+        }
     }
 }

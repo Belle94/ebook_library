@@ -13,6 +13,10 @@ public class Library {
     public void addBook(Book book){
         collection.add(book);
     }
+    public void removeBook(Book book){
+        if (collection.contains(book))
+            collection.remove(book);
+    }
     public Vector<Book> getCollection(){
         return collection;
     }

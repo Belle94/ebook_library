@@ -17,11 +17,26 @@ public abstract class Book {
         this.file = file;
         icon = new Image("book.png");
     }
-    public Image getIcon() {
-        return icon;
-    }
-    public String getFilePath() {
-        return file.getAbsolutePath();
+    public abstract String getAuthor();
+    public abstract String getTitle();
+    public abstract String getDate();
+    public abstract int getTotalPage();
+    public abstract void setTitle(String title);
+    public abstract void setAuthor(String title);
+
+    public Image getIcon() {return icon;}
+    public String getFilePath() {return file.getAbsolutePath();}
+    public void setPane(Pane pane){this.pane = pane;}
+    public Pane getPane(){return pane;}
+    public static Book getExstension(File f){
+        Book book;
+        if (f.getAbsolutePath().endsWith(".pdf") || f.getAbsolutePath().endsWith(".PDF"))
+            book = new Pdf(f);
+        else if (f.getAbsolutePath().endsWith(".epub") || f.getAbsolutePath().endsWith(".EPUB"))
+            book = new EPub(f);
+        else
+            book = new UnknownBook(f, "Unknown", "Unknown");
+        return book;
     }
     @Override
     public String toString(){
@@ -31,15 +46,4 @@ public abstract class Book {
                 +"\nPages: "+ this.getTotalPage()
                 +"\nPathFile: "+this.getFilePath();
     }
-    public void setPane(Pane pane){
-        this.pane = pane;
-    }
-    public Pane getPane(){
-        return pane;
-    }
-    public abstract String getAuthor();
-    public abstract String getTitle();
-    public abstract String getDate();
-    public abstract int getTotalPage();
-
 }
