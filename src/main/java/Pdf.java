@@ -2,7 +2,6 @@ import javafx.scene.image.Image;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.common.PDMetadata;
 
 import java.io.File;
 import java.io.IOException;

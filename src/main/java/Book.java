@@ -2,12 +2,13 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
 import java.io.File;
+import java.io.Serializable;
 
 /**
  * @author Francesco
  * Created by Francesco on 06/09/2015.
  */
-public abstract class Book {
+public abstract class Book implements Serializable {
 
     private File file;
     private Image icon;
@@ -28,7 +29,7 @@ public abstract class Book {
     public String getFilePath() {return file.getAbsolutePath();}
     public void setPane(Pane pane){this.pane = pane;}
     public Pane getPane(){return pane;}
-    public static Book getExstension(File f){
+    public static Book getExtension(File f){
         Book book;
         if (f.getAbsolutePath().endsWith(".pdf") || f.getAbsolutePath().endsWith(".PDF"))
             book = new Pdf(f);

@@ -11,6 +11,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -220,6 +221,9 @@ public class Gui {
         buttonPrint.setOnAction(event -> library.stamp());
         buttonEdit.setOnAction(event -> showInfoBookWindow());
         buttonRemove.setOnAction(event -> settingRemoveBook());
+        buttonSave.setOnAction(event -> settingSaveButton());
+        buttonLoad.setOnAction(event -> settingLoadButton());
+        buttonPrint.setOnAction(event -> library.print());
         ArrayList<Button> buttonsVbox = new ArrayList<>();
         buttonsVbox.add(buttonAdd);
         buttonsVbox.add(buttonEdit);
@@ -248,6 +252,34 @@ public class Gui {
         }
     }
 
+    public void settingSaveButton() {
+        FileChooser fs = new FileChooser();
+        fs.setTitle("Save library");
+        fs.setInitialDirectory(new File(System.getProperty("user.home")));
+        fs.getExtensionFilters().add(new FileChooser.ExtensionFilter("Library file", "*.libdat"));
+        File file = fs.showSaveDialog(new Stage());
+        try {
+            library.saveLibrary(file);
+        }catch (Exception e){
+            new Alert(Alert.AlertType.ERROR, "Lirary not saved",ButtonType.OK);
+        }
+    }
+
+    public void settingLoadButton() {
+        FileChooser fs = new FileChooser();
+        fs.setTitle("Load library");
+        fs.setInitialDirectory(new File(System.getProperty("user.home")));
+        fs.getExtensionFilters().add(new FileChooser.ExtensionFilter("Library file", "*.libdat"));
+        File file = fs.showOpenDialog(new Stage());
+        try {
+            library.loadLibrary(file);
+            clearGui();
+            addBooksToGui(library.getCollection());
+        }catch (Exception e){
+            new Alert(Alert.AlertType.ERROR, "Lirary not loaded",ButtonType.OK);
+        }
+    }
+
     public void settingAddButton() {
         FileChooser fs = new FileChooser();
         fs.setTitle("Choose one or more Books");
@@ -261,7 +293,7 @@ public class Gui {
         List<File> listFiles = fs.showOpenMultipleDialog(new Stage());
         if (listFiles != null)
             listFiles.stream().filter(f -> f != null).forEach(f -> {
-                Book book = Book.getExstension(f);
+                Book book = Book.getExtension(f);
                 library.addBook(book);
                 addBookToGui(book);
             });
