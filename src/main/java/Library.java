@@ -1,21 +1,17 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
-import javafx.print.PageLayout;
-import javafx.print.PageOrientation;
-import javafx.print.Printer;
+import javafx.geometry.Pos;
 import javafx.print.PrinterJob;
-import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.transform.Scale;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.util.List;
-import java.util.Observable;
 import java.util.Vector;
 
 /**
@@ -67,12 +63,13 @@ public class Library implements Serializable{
     }
 
     public void print() {
+        double width = 595, height = 842;
         //creating table view for printing
         if(collection.size() == 0)
             return;
         ObservableList<Book> observableList = FXCollections.observableList(collection);
-        TableView<Book> node = new TableView<>();
-        node.setItems(observableList);
+        TableView<Book> tableView = new TableView<>();
+        tableView.setItems(observableList);
         TableColumn<Book,String> firstCol = new TableColumn<>("Title");
         firstCol.setCellValueFactory(new PropertyValueFactory<>("title"));
         TableColumn<Book,String> secondCol = new TableColumn<>("Author");
@@ -83,16 +80,33 @@ public class Library implements Serializable{
         fourthCol.setCellValueFactory(new PropertyValueFactory<>("date"));
         TableColumn<Book,String> fifthCol = new TableColumn<>("Path");
         fifthCol.setCellValueFactory(new PropertyValueFactory<>("filePath"));
-        node.getColumns().setAll(firstCol, secondCol, thirdCol, fourthCol,fifthCol);
-        node.setPrefSize(595,842);
-        node.setVisible(true);
+        tableView.getColumns().setAll(firstCol, secondCol, thirdCol, fourthCol, fifthCol);
+        tableView.setPrefSize(width, height);
+        tableView.setMaxSize(width, height);
+        Button print = new Button("Print");
+        Button cancel = new Button("cancel");
+        VBox mainPane = new VBox();
+        HBox footerPane = new HBox(5);
+        mainPane.getChildren().addAll(tableView, footerPane);
+        footerPane.getChildren().addAll(print, cancel);
+        footerPane.setAlignment(Pos.BOTTOM_CENTER);
+        print.setAlignment(Pos.CENTER);
+        cancel.setAlignment(Pos.CENTER);
+        tableView.setVisible(true);
         Stage stage = new Stage();
-        Scene scene = new Scene(node);
+        stage.setTitle("Print preview");
+        Scene scene = new Scene(mainPane);
+        stage.setMaxWidth(width);
+        stage.setMaxHeight(height + footerPane.getHeight());
         stage.setScene(scene);
-        stage.showAndWait();
         //print table
-        PrinterJob printerJob = PrinterJob.createPrinterJob();
-        if(printerJob.showPrintDialog(stage.getOwner()) && printerJob.printPage(node))
-            printerJob.endJob();
+        print.setOnAction(event -> {
+            stage.close();
+            PrinterJob printerJob = PrinterJob.createPrinterJob();
+            if (printerJob.showPrintDialog(stage.getOwner()) && printerJob.printPage(tableView))
+                printerJob.endJob();
+        });
+        cancel.setOnAction(event -> stage.close());
+        stage.show();
     }
 }
