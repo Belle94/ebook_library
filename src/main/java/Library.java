@@ -1,3 +1,7 @@
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -11,15 +15,19 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.File;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Vector;
 
 /**
  * @author Francesco
  * Created by Francesco on 06/09/2015.
  */
-public class Library implements Serializable{
+public class Library {
     private Vector<Book> collection;
+    private JdbcConnectionSource jdbcConnectionSource;
+    private Dao<DatabaseBook, String> dbBookDao;
 
     public Library(){
         collection = new Vector<>();
@@ -35,7 +43,44 @@ public class Library implements Serializable{
         return collection;
     }
 
-    public void saveLibrary(File filePath)throws IOException{
+    public void loadLibrary(File filePath) throws SQLException, ClassNotFoundException{
+        openConnection(filePath.getAbsolutePath());
+        collection = new Vector<>();
+        List<DatabaseBook> dbBooksList = dbBookDao.queryForAll();
+        for (DatabaseBook dbBook : dbBooksList){
+            collection.add(Book.getExtension(new File(dbBook.getFilePath())));
+        }
+        closeConnection();
+    }
+
+    public void saveLibrary(File filePath) throws SQLException, ClassNotFoundException {
+        openConnection(filePath.getAbsolutePath());
+        for(Book book: collection) {
+            dbBookDao.createIfNotExists(new DatabaseBook(book));
+        }
+        closeConnection();
+    }
+    /**
+     * Open a connection with the database
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    private void openConnection(String databaseUrl) throws SQLException, ClassNotFoundException {
+        final String prefixString = "jdbc:sqlite:";
+        Class.forName("org.sqlite.JDBC");
+        jdbcConnectionSource = new JdbcConnectionSource(prefixString+databaseUrl);
+        dbBookDao = DaoManager.createDao(jdbcConnectionSource, DatabaseBook.class);
+        TableUtils.createTableIfNotExists(jdbcConnectionSource, DatabaseBook.class);
+    }
+    /**
+     * Closes the connection with the database
+     */
+    public void closeConnection() {
+        jdbcConnectionSource.closeQuietly();
+    }
+
+    //Serializable save and load way
+/*    public void saveLibrary(File filePath)throws IOException{
         FileOutputStream f = new FileOutputStream(filePath.getAbsolutePath());
         ObjectOutputStream out = new ObjectOutputStream(f);
         out.writeObject(collection);
@@ -45,12 +90,12 @@ public class Library implements Serializable{
 
     @SuppressWarnings("unchecked")
     public void loadLibrary(File filePath)throws Exception{
-        collection.clear();
+        collection = new Vector<>();
         FileInputStream f = new FileInputStream(filePath.getAbsolutePath());
         ObjectInputStream input = new ObjectInputStream(f);
         collection = (Vector<Book>) input.readObject();
         input.close();
-    }
+    }*/
     /**
      * Print the complete collection in standard output.
      */

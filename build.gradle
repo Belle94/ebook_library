@@ -14,8 +14,21 @@ repositories {
     }
 }
 
+idea {
+    module {
+        downloadSources = true
+    }
+}
+
 dependencies {
     compile 'org.apache.pdfbox:pdfbox:1.8.10'
+    compile 'org.xerial:sqlite-jdbc:3.8.11'
+    compile 'com.j256.ormlite:ormlite-jdbc:4.48'
+    compile 'com.j256.ormlite:ormlite-core:4.48'
+    runtime 'com.j256.ormlite:ormlite-jdbc:4.48'
+    compile 'log4j:log4j:1.2.17'
+    runtime 'log4j:log4j:1.2.17'
+    runtime 'org.xerial:sqlite-jdbc:3.8.11'
     compile group: 'nl.siegmann.epublib', name: 'epublib-core', version: '3.1'
     compile group: 'nl.siegmann.epublib', name: 'epublib-parent', version: '3.1'
     compile group: 'nl.siegmann.epublib', name: 'epublib-tools', version: '3.1'

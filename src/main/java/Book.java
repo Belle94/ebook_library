@@ -2,13 +2,12 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
 import java.io.File;
-import java.io.Serializable;
 
 /**
  * @author Francesco
  * Created by Francesco on 06/09/2015.
  */
-public abstract class Book implements Serializable {
+public abstract class Book {
 
     private File file;
     private Image icon;

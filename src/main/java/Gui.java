@@ -11,7 +11,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
-import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -256,12 +256,14 @@ public class Gui {
         FileChooser fs = new FileChooser();
         fs.setTitle("Save library");
         fs.setInitialDirectory(new File(System.getProperty("user.home")));
-        fs.getExtensionFilters().add(new FileChooser.ExtensionFilter("Library file", "*.libdat"));
+        fs.getExtensionFilters().add(new FileChooser.ExtensionFilter("Library Files", "*.db"));
         File file = fs.showSaveDialog(new Stage());
-        try {
-            library.saveLibrary(file);
-        }catch (Exception e){
-            new Alert(Alert.AlertType.ERROR, "Lirary not saved",ButtonType.OK);
+        if (file != null) {
+            try {
+                library.saveLibrary(file);
+            } catch (SQLException | ClassNotFoundException e) {
+                new Alert(Alert.AlertType.ERROR, "Lirary not saved", ButtonType.OK);
+            }
         }
     }
 
@@ -269,14 +271,16 @@ public class Gui {
         FileChooser fs = new FileChooser();
         fs.setTitle("Load library");
         fs.setInitialDirectory(new File(System.getProperty("user.home")));
-        fs.getExtensionFilters().add(new FileChooser.ExtensionFilter("Library file", "*.libdat"));
+        fs.getExtensionFilters().add(new FileChooser.ExtensionFilter("Library Files", "*.db"));
         File file = fs.showOpenDialog(new Stage());
-        try {
-            library.loadLibrary(file);
-            clearGui();
-            addBooksToGui(library.getCollection());
-        }catch (Exception e){
-            new Alert(Alert.AlertType.ERROR, "Lirary not loaded",ButtonType.OK);
+        if (file != null){
+            try {
+                library.loadLibrary(file);
+                clearGui();
+                addBooksToGui(library.getCollection());
+            }catch (SQLException | ClassNotFoundException e){
+                new Alert(Alert.AlertType.ERROR, "Lirary not loaded",ButtonType.OK);
+            }
         }
     }
 

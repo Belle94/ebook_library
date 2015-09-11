@@ -2,7 +2,6 @@ import javafx.scene.image.Image;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -14,7 +13,8 @@ import java.util.Objects;
  */
 public class Pdf extends Book {
     private Image icon;
-    private String author, title;
+    private String title;
+    private String author;
     private String date;
     private int totalPage;
 
