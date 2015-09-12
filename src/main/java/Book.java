@@ -10,21 +10,19 @@ import java.io.File;
 public abstract class Book {
 
     private File file;
-    private Image icon;
     private Pane pane;
 
     public Book(File file){
         this.file = file;
-        icon = new Image("book.png");
     }
     public abstract String getAuthor();
     public abstract String getTitle();
     public abstract String getDate();
+    public abstract Image getIcon();
     public abstract int getTotalPage();
     public abstract void setTitle(String title);
     public abstract void setAuthor(String title);
 
-    public Image getIcon() {return icon;}
     public String getFilePath() {return file.getAbsolutePath();}
     public void setPane(Pane pane){this.pane = pane;}
     public Pane getPane(){return pane;}
