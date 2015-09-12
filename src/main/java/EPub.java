@@ -36,6 +36,14 @@ public class EPub extends Book {
             System.out.println("[ERROR] Cause: " + e.getCause());
         }
     }
+    public EPub(File filePdf, String title, String author, String data, int totalPage){
+        super(filePdf);
+        image = new Image("epub.png");
+        this.title = title;
+        this.author = author;
+        this.date = data;
+        this.totalPage = totalPage;
+    }
     @Override
     public String getAuthor() {
         return author;

@@ -218,7 +218,6 @@ public class Gui {
         buttonLoad = new Button("Load");
         buttonPrint = new Button("Print");
         buttonAdd.setOnAction(event -> settingAddButton());
-        buttonPrint.setOnAction(event -> library.stamp());
         buttonEdit.setOnAction(event -> showInfoBookWindow());
         buttonRemove.setOnAction(event -> settingRemoveBook());
         buttonSave.setOnAction(event -> settingSaveButton());

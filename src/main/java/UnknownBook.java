@@ -1,3 +1,4 @@
+import javafx.scene.image.Image;
 import java.io.File;
 
 /**
@@ -6,7 +7,7 @@ import java.io.File;
  */
 public class UnknownBook extends Book {
     private String title, author, date;
-
+    private Image image;
     /**
      *
      * @param file
@@ -23,11 +24,19 @@ public class UnknownBook extends Book {
      */
     public UnknownBook(File file, String defaultString, String defaultDate){
         this(file);
+        image = new Image("book.png");
         setTitle(defaultString);
         setAuthor(defaultString);
         setDate(defaultDate);
     }
 
+    public UnknownBook(File filePdf, String title, String author, String data){
+        super(filePdf);
+        image = new Image("book.png");
+        this.title = title;
+        this.author = author;
+        this.date = data;
+    }
     @Override
     public String getAuthor() {
         return author;
@@ -44,6 +53,8 @@ public class UnknownBook extends Book {
     public int getTotalPage() {
         return 0;
     }
+    @Override
+    public Image getIcon(){return image;}
     @Override
     public void setTitle(String title){
         this.title = title;

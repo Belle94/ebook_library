@@ -14,7 +14,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
@@ -43,15 +42,22 @@ public class Library {
         return collection;
     }
 
+    //new
     public void loadLibrary(File filePath) throws SQLException, ClassNotFoundException{
         openConnection(filePath.getAbsolutePath());
-        collection = new Vector<>();
+        List<DatabaseBook> dbBooksList = dbBookDao.queryForAll();
+        collection = DatabaseBook.convertDbBookToBook(dbBooksList);
+        closeConnection();
+    }
+    //old
+/*    public void loadLibrary(File filePath) throws SQLException, ClassNotFoundException{
+        openConnection(filePath.getAbsolutePath());
         List<DatabaseBook> dbBooksList = dbBookDao.queryForAll();
         for (DatabaseBook dbBook : dbBooksList){
             collection.add(Book.getExtension(new File(dbBook.getFilePath())));
         }
         closeConnection();
-    }
+    }*/
 
     public void saveLibrary(File filePath) throws SQLException, ClassNotFoundException {
         openConnection(filePath.getAbsolutePath());
@@ -77,34 +83,6 @@ public class Library {
      */
     public void closeConnection() {
         jdbcConnectionSource.closeQuietly();
-    }
-
-    //Serializable save and load way
-/*    public void saveLibrary(File filePath)throws IOException{
-        FileOutputStream f = new FileOutputStream(filePath.getAbsolutePath());
-        ObjectOutputStream out = new ObjectOutputStream(f);
-        out.writeObject(collection);
-        out.flush();
-        out.close();
-    }
-
-    @SuppressWarnings("unchecked")
-    public void loadLibrary(File filePath)throws Exception{
-        collection = new Vector<>();
-        FileInputStream f = new FileInputStream(filePath.getAbsolutePath());
-        ObjectInputStream input = new ObjectInputStream(f);
-        collection = (Vector<Book>) input.readObject();
-        input.close();
-    }*/
-    /**
-     * Print the complete collection in standard output.
-     */
-    public void stamp(){
-        int i = 1;
-        System.out.println("###### EBOOK LIBRARY ######");
-        for (Book b:collection){
-            System.out.println("\n# Book n."+i++ +b.toString());
-        }
     }
 
     public void print() {
