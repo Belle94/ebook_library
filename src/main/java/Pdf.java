@@ -12,7 +12,7 @@ import java.util.Objects;
  * Created by Francesco on 06/09/2015.
  */
 public class Pdf extends Book {
-    public static final Image icon = new Image("pdf.png");
+    public Image icon;
     private String title;
     private String author;
     private String date;
@@ -24,6 +24,7 @@ public class Pdf extends Book {
     public Pdf(File filePdf) {
         super(filePdf);
         try {
+            icon = new Image("pdf.png");
             PDDocument doc = PDDocument.load(filePdf);
             PDDocumentInformation info = doc.getDocumentInformation();
             author = info.getAuthor();
@@ -46,6 +47,7 @@ public class Pdf extends Book {
     }
     public Pdf(File filePdf, String title, String author, String data, int totalPage){
         super(filePdf);
+        icon = new Image("pdf.png");
         this.title = title;
         this.author = author;
         this.date = data;
