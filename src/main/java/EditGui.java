@@ -15,7 +15,8 @@ import java.util.ArrayList;
 
 
 /**
- * Created by Francesco on 08/09/2015.
+ * Classe che gestisce la finestra di modifica dei libri
+ * Created on 08/09/2015.
  * @author Francesco
  */
 public class EditGui {
@@ -30,6 +31,11 @@ public class EditGui {
     private TextField titleField, authorField;
     private Gui gui;
 
+    /**
+     * Costruttore, crea un nuovo stage e lo imposta solo se il libro è consistente
+     * @param book
+     * @param gui
+     */
     public EditGui(Book book, Gui gui) {
         if (book == null)
             return;
@@ -44,8 +50,14 @@ public class EditGui {
         primaryStage.setScene(scene);
     }
 
+    /**
+     * @return lo Stage da visualizzare
+     */
     public Stage getStage(){return primaryStage;}
 
+    /**
+     * configura il pannello, assegnandoli vari bottoni e label.
+     */
     public void settingBorderPane() {
         double vboxLWidth = width *0.20;
         double vboxRWidth = width *0.60;
@@ -86,6 +98,9 @@ public class EditGui {
         borderPane.setBottom(footerPane);
     }
 
+    /**
+     * configura le label di sinistra
+     */
     public void settingLeftLabels() {
         leftLabels = new ArrayList<>();
         leftLabels.add(new Label("Title: "));
@@ -98,6 +113,9 @@ public class EditGui {
         });
     }
 
+    /**
+     * configura le label di destra
+     */
     public void settingRightLabels() {
         rightLabels = new ArrayList<>();
         titleField = new TextField(book.getTitle());
@@ -121,6 +139,9 @@ public class EditGui {
         }
     }
 
+    /**
+     * configura i bottoni
+     */
     public void settingButton(){
         cancel.setOnAction(event -> primaryStage.close());
         save.setOnAction(event -> {

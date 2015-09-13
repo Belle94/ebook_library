@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * Created by Francesco on 11/09/2015.
+ * Classe che definisce gli attributi da scrivere nel Database, ho creato questa classe per rendere
+ * indipendente le informazioni scritte nel database da il resto dell' applicazione
+ * @author Francesco
+ * Created on 11/09/2015.
  */
 
 @DatabaseTable(tableName = "library")
@@ -24,6 +27,11 @@ public class DatabaseBook {
     private int totalPage;
 
     public DatabaseBook(){}
+
+    /**
+     * Costruttore
+     * @param book libro da salvare
+     */
     public DatabaseBook(Book book){
         filePath = book.getFilePath();
         title = book.getTitle();
@@ -71,6 +79,13 @@ public class DatabaseBook {
     public void setTotalPage(int totalPage) {
         this.totalPage = totalPage;
     }
+
+    /**
+     * Metodo utilizzato per la conversione da generico DbBook a uno specifico Book.
+     * Controlla l' estensione del libro e crea l' istanza per quella estensione
+     * @param listBook lista di libri da convertire in Book
+     * @return vettore di libri
+     */
     public static Vector<Book> convertDbBookToBook(List<DatabaseBook> listBook){
         Vector<Book> collection = new Vector<>();
         for (DatabaseBook dbBook : listBook) {

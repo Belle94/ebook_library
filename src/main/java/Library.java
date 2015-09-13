@@ -20,45 +20,65 @@ import java.util.List;
 import java.util.Vector;
 
 /**
+ * Classe che definisce la libreria.
  * @author Francesco
- * Created by Francesco on 06/09/2015.
+ * Created on 06/09/2015.
  */
 public class Library {
     private Vector<Book> collection;
     private JdbcConnectionSource jdbcConnectionSource;
     private Dao<DatabaseBook, String> dbBookDao;
 
+    /**
+     * Costruttore, crea un nuovo vettore di libri
+     */
     public Library(){
         collection = new Vector<>();
     }
+
+    /**
+     * Aggiunge un libro alla libreria
+     * @param book libro
+     */
     public void addBook(Book book){
         collection.add(book);
     }
+
+    /**
+     * rimuove un libro dalla libreria
+     * @param book libro
+     */
     public void removeBook(Book book){
         if (collection.contains(book))
             collection.remove(book);
     }
+
+    /**
+     * @return libreria di libri in uso
+     */
     public Vector<Book> getCollection(){
         return collection;
     }
 
-    //new
-    public void loadLibrary(File filePath) throws SQLException, ClassNotFoundException{
+    /**
+     * carica la libreria dal database
+     * @param filePath percorso dove caricare la libreria
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public void loadLibrary(File filePath) throws SQLException, ClassNotFoundException {
         openConnection(filePath.getAbsolutePath());
         List<DatabaseBook> dbBooksList = dbBookDao.queryForAll();
         collection = DatabaseBook.convertDbBookToBook(dbBooksList);
         closeConnection();
     }
-    //old
-/*    public void loadLibrary(File filePath) throws SQLException, ClassNotFoundException{
-        openConnection(filePath.getAbsolutePath());
-        List<DatabaseBook> dbBooksList = dbBookDao.queryForAll();
-        for (DatabaseBook dbBook : dbBooksList){
-            collection.add(Book.getExtension(new File(dbBook.getFilePath())));
-        }
-        closeConnection();
-    }*/
 
+    /**
+     * salva la libreria nel database
+     * @param filePath percorso dove salvare la libreria
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public void saveLibrary(File filePath) throws SQLException, ClassNotFoundException {
         openConnection(filePath.getAbsolutePath());
         for(Book book: collection) {
@@ -66,6 +86,7 @@ public class Library {
         }
         closeConnection();
     }
+
     /**
      * Open a connection with the database
      * @throws SQLException
@@ -78,6 +99,7 @@ public class Library {
         dbBookDao = DaoManager.createDao(jdbcConnectionSource, DatabaseBook.class);
         TableUtils.createTableIfNotExists(jdbcConnectionSource, DatabaseBook.class);
     }
+
     /**
      * Closes the connection with the database
      */
@@ -85,6 +107,11 @@ public class Library {
         jdbcConnectionSource.closeQuietly();
     }
 
+    /**
+     * stampa la libreria, per stampare la libreria mi appoggio a una TableView,
+     * in questo modo creo una anteprima di stampa, se conferma la stampa attraverso
+     * il bottone allora procedo altrimenti non stampo.
+     */
     public void print() {
         double width = 595, height = 842;
         //creating table view for printing

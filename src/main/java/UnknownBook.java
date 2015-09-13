@@ -21,9 +21,9 @@ public class UnknownBook extends Book {
 
     /**
      *
-     * @param file
-     * @param defaultString
-     * @param defaultDate
+     * @param file file
+     * @param defaultString stringa di default per titolo e autore
+     * @param defaultDate stringa di default per la data
      */
     public UnknownBook(File file, String defaultString, String defaultDate){
         this(file);

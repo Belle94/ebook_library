@@ -9,8 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 /**
+ * Classe che descrive un pdf
  * @author Francesco
- * Created by Francesco on 06/09/2015.
+ * Created on 06/09/2015.
  */
 public class Pdf extends Book {
     public Image icon;
@@ -20,6 +21,8 @@ public class Pdf extends Book {
     private int totalPage;
 
     /**
+     * Costruttore. Prova ad aprire il pdf ed estrarre le informazioni necessarie,
+     * se non ci riesce ritorna error in stout
      * @param filePdf pdf file
      */
     public Pdf(File filePdf) {
@@ -46,6 +49,15 @@ public class Pdf extends Book {
             System.out.println("[ERROR] Cause: " + e.getCause());
         }
     }
+
+    /**
+     * Costruttore Pdf
+     * @param filePdf pdf file
+     * @param title titolo
+     * @param author autore
+     * @param data data di creazione
+     * @param totalPage numero di pagine totali del pdf
+     */
     public Pdf(File filePdf, String title, String author, String data, int totalPage){
         super(filePdf);
         icon = new Image("pdf.png");
@@ -106,4 +118,13 @@ public class Pdf extends Book {
             System.out.println("[ERROR] Cause: " + e.getCause());
         }
     }
+
+    /**
+     * Crea una nuova istanza del visualizzatore per pdf
+     */
+    public void showPdf(Pdf book){
+        pdfViewer reader = new pdfViewer(book);
+        reader.getStage().showAndWait();
+    }
+
 }

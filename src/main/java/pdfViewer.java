@@ -18,7 +18,9 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by Francesco on 12/09/2015.
+ * pdfViewer class. classe che implementa il visualizzatore pdf
+ * @author Francesco
+ * Created on 12/09/2015.
  */
 public class pdfViewer {
     private Pdf book;
@@ -30,6 +32,10 @@ public class pdfViewer {
     private SwingNode pagePanelFx;
     private Label pageLabel;
 
+    /**
+     * Costruttore
+     * @param book il libro da leggere
+     */
     public pdfViewer(Pdf book){
         this.book = book;
         setPrimaryStage();
@@ -42,7 +48,6 @@ public class pdfViewer {
             pagePanel = new PDFPagePanel();
             pagePanelFx = new SwingNode();
             pagePanel.setPage((PDPage) pdPagesList.get(page));
-            pagePanel.repaint();
             SwingUtilities.invokeLater(() -> pagePanelFx.setContent(pagePanel));
             settingLayout();
         }catch (IOException e){
@@ -50,8 +55,14 @@ public class pdfViewer {
         }
     }
 
+    /**
+     * @return ritorna il pdf-viewer
+     */
     public Stage getStage(){return primaryStage;}
 
+    /**
+     * Configura le impostazioni dello Stage per il pdf-viewer
+     */
     public void setPrimaryStage(){
         primaryStage = new Stage();
         primaryStage.setTitle("Pdf Reader");
@@ -88,6 +99,11 @@ public class pdfViewer {
             }
         });
     }
+
+    /**
+     * visualizza la pagina presa in input se non è fuori range
+     * @param page pagina da leggere
+     */
     public void readEbook(int page) {
         if (page <= lastPage && page >= firstPage){
             this.page = page;
@@ -97,7 +113,9 @@ public class pdfViewer {
         }
     }
 
-
+    /**
+     * configura il layout del pdf-viewer
+     */
     public void settingLayout(){
         double width,height;
         BorderPane pdfBox = new BorderPane();
@@ -108,7 +126,6 @@ public class pdfViewer {
         Label titleLabel = new Label();
         Button nextButton = new Button("Next"), previousButton = new Button("Previous");
         pageLabel = new Label();
-
         containerTop.setAlignment(Pos.CENTER);
         hBox.setSpacing(20);
         hBox.setPadding(new Insets(0, 10, 0, 10));
@@ -120,27 +137,24 @@ public class pdfViewer {
         previousButton.setMinWidth(70);
         nextButton.setOnAction(event -> readEbook(page+1));
         previousButton.setOnAction(event -> readEbook(page-1));
-        width = pagePanel.getWidth() +20;
-        height = pagePanel.getHeight()+20;
+        width = 600 ;
+        height = 850 ;
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setPrefSize(width, height);
-        scrollPane.setMaxSize(width, height);
         scrollPane.setContent(pdfBox);
         pdfBox.setCenter(pagePanelFx);
         pdfBox.setPrefSize(width, height);
-        pdfBox.setMaxSize(width, height);
-        containerTop.setMaxSize(width, pdfBox.getMaxWidth());
-        height = height + 36+25; //  36 LabelHeight 25 ButtonHeight
-        container.setMaxSize(width, height);
-        hBox.getChildren().addAll(previousButton,pageLabel,nextButton);
+        hBox.getChildren().addAll(previousButton, pageLabel, nextButton);
         containerTop.getChildren().addAll(titleLabel, hBox);
         container.getChildren().addAll(containerTop, scrollPane);
-        primaryStage.setMaxHeight(height);
-        primaryStage.setMaxWidth(width);
+        pagePanel.repaint();
         primaryStage.setScene(new Scene(container));
     }
 
+    /**
+     *Aggiorna la label con la pagina corrente
+     */
     public void updateTextLabel(){
-        pageLabel.setText("Page: "+page);
+        pageLabel.setText("Page: "+ (page+1));
     }
 }

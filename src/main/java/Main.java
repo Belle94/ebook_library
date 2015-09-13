@@ -5,11 +5,13 @@ import javafx.stage.Stage;
 import java.util.logging.Logger;
 
 /**
- *
+ * Main class
  * @author Francesco
  */
 public class Main extends Application {
-
+    /** the standard method called by main in javafx applications
+     * @param stage the Stage of application
+     */
     @Override
     public void start(Stage stage) throws Exception {
         Gui gui = new Gui();
@@ -18,9 +20,10 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
     }
-    /**
-     * @param args the command line arguments
-     */
+/**
+ * Main function
+ * @param args the command line arguments
+ */
     public static void main(String[] args) {
         launch(args);
     }

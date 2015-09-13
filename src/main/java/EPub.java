@@ -9,7 +9,9 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * Created by Francesco on 07/09/2015.
+ * Classe che descrive un libro formato ePub.
+ * @author Francesco
+ * Created on 07/09/2015.
  */
 public class EPub extends Book {
     private Image image;
@@ -17,6 +19,11 @@ public class EPub extends Book {
     private String date;
     private int totalPage;
 
+    /**
+     * Costruttore. Prova ad aprire l' ePub ed estrarre le informazioni necessarie,
+     * se non ci riesce ritorna error in stout
+     * @param file ePub file
+     */
     public EPub(File file){
         super(file);
         try {
@@ -37,6 +44,15 @@ public class EPub extends Book {
             System.out.println("[ERROR] Cause: " + e.getCause());
         }
     }
+
+    /**
+     * Costruttore.
+     * @param filePdf file pdf
+     * @param title titolo
+     * @param author autore
+     * @param data data
+     * @param totalPage numero pagine totali
+     */
     public EPub(File filePdf, String title, String author, String data, int totalPage){
         super(filePdf);
         image = new Image("epub.png");
@@ -101,6 +117,10 @@ public class EPub extends Book {
             System.out.println("[ERROR] Cause: " + e.getCause());
         }
     }
+
+    /**
+     * Crea una nuova istanza del visualizzatore per ePub
+     */
     public void showReader(){
         try {
             new Viewer(new EpubReader().readEpub(new FileInputStream(getFilePath())));

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Vector;
 
 /**
+ * Classe principale per la grafica
  * @author Francesco
  * Created on 05/09/2015.
  */
@@ -34,6 +35,10 @@ public class Gui {
     private Book prcBook= null;
     private boolean infoBookWindow = false, viewerWindow = false;
 
+    /**
+     * Costruttore, crea una nuova libreria, richiamando i metodi per la
+     * configurazione dell' interfaccia.
+     */
     public Gui() {
         library = new Library();
         settingLabels();
@@ -43,10 +48,16 @@ public class Gui {
         settingRootElement();
     }
 
+    /**
+     * @return Pannello principale
+     */
     public Pane getRootElement() {
         return borderPane;
     }
 
+    /**
+     * imposta e configura il pannello di sinistra con i bottoni,label e textfield
+     */
     public void settingVbox() {
         vBox = new VBox();
         vBox.setPrefSize(prefWidth * 0.26, prefHeight * 0.84);
@@ -60,6 +71,9 @@ public class Gui {
         vBox.setOnMouseClicked(event -> updateBookSelected(null));
     }
 
+    /**
+     * imposta lo scroll pane per il pannello(FlowPane) principale dei libri
+     */
     public void settingScrollPane() {
         scrollPane = new ScrollPane();
         scrollPane.setPrefSize(prefWidth * 0.74, prefHeight * 0.84);
@@ -68,6 +82,9 @@ public class Gui {
         scrollPane.setContent(flowPane);
     }
 
+    /**
+     * configura i colori e la grafica della barra di ricerca
+     */
     public void settingTextField() {
         textField = new TextField();
         textField.setPromptText("Title or Author");
@@ -76,6 +93,9 @@ public class Gui {
         textField.setOnKeyReleased(this::settingSearchText);
     }
 
+    /**
+     * configura la grafica del pannello che contiene i libri
+     */
     public void settingFlow() {
         flowPane = new FlowPane();
         flowPane.setAlignment(Pos.TOP_LEFT);
@@ -88,6 +108,9 @@ public class Gui {
         flowPane.setStyle("-fx-background-color: #000000; -fx-padding: 15px;");
     }
 
+    /**
+     * visualizza la finestra di Informazione e Modifiche dei libri
+     */
     public void showInfoBookWindow(){
         if (prcBook != null && !infoBookWindow) {
             infoBookWindow = true;
@@ -96,28 +119,42 @@ public class Gui {
         }
     }
 
+    /**
+     * aggiunge un libro all' interfaccia grafica
+     * @param book libro
+     */
     public void addBookToGui(Book book) {
         book.setPane(CreatePane(book));
         flowPane.getChildren().add(book.getPane());
     }
 
+    /**
+     * Rimuove un libro all' interfaccia grafica
+     * @param book libro
+     */
     public void removeBookToGui(Book book){
         if(flowPane.getChildren().contains(book.getPane()))
             flowPane.getChildren().remove(book.getPane());
     }
 
+    /**
+     * Aggiunge un vettore di libri all' interfaccia grafica
+     * @param vectorBook vettore di libri
+     */
     public void addBooksToGui(Vector<Book> vectorBook) {
         vectorBook.forEach(this::addBookToGui);
     }
 
+    /**
+     * pulisce l' interfaccia grafica svuotandola dai libri
+     */
     public void clearGui() {
         flowPane.getChildren().clear();
     }
 
     /**
-     * Polymorphism in the follow class... the same line of code
-     * works for every extension, doesn't mean is pdf or ePub.
-     *
+     * Crea il pannello per la rappresentazione del libro il proprio titolo, autore
+     * e immagine
      * @param book the book will have its own Pan
      * @return the Pane witch its propriety
      */
@@ -150,6 +187,10 @@ public class Gui {
         return pane;
     }
 
+    /**
+     * Aggiorna il libro selezionato
+     * @param slcBook libro selezionato
+     */
     public void updateBookSelected(Book slcBook) {
         if (prcBook != null && slcBook != null && prcBook != slcBook) {
             prcBook.getPane().setStyle("-fx-background-color: transparent;");
@@ -169,6 +210,9 @@ public class Gui {
         }
     }
 
+    /**
+     * configura il pannello generale
+     */
     public void settingRootElement() {
         borderPane = new BorderPane();
         borderPane.setStyle("-fx-background-color: #000000;");
@@ -181,6 +225,9 @@ public class Gui {
         borderPane.setOnKeyReleased(event -> { if (event.getCode() == KeyCode.ENTER)showInfoBookWindow();});
     }
 
+    /**
+     * configura le labels generali dell' interfaccia
+     */
     public void settingLabels() {
         labelTitle = new Label("Ebook Library");
         labelTitle.setTextFill(Color.web("#ffffff"));
@@ -210,6 +257,10 @@ public class Gui {
         labelFunctions.setOnMouseClicked(event -> updateBookSelected(null));
     }
 
+    /**
+     * configura i bottoni
+     * @return vettore di bottoni del pannello di sinistra dell' interfaccia grafica
+     */
     public ArrayList<Button> settingButton() {
         Button buttonAdd, buttonEdit, buttonRemove, buttonSave, buttonLoad, buttonPrint, buttonRead, buttonExternalRead;
         buttonAdd = new Button("Add");
@@ -250,7 +301,10 @@ public class Gui {
         }
         return buttonsVbox;
     }
-    
+
+    /**
+     * imposta la funzione del bottone Ext Read
+     */
     public void settingExternalReadButton(){
         if (prcBook == null)
             return;
@@ -269,14 +323,16 @@ public class Gui {
         }
     }
 
+    /**
+     * imposta la funzione del bottone Read
+     */
     public void settingReadButton() {
         if (!viewerWindow) {
             if (prcBook == null)
                 return;
             if (prcBook instanceof Pdf) {
                 viewerWindow = true;
-                pdfViewer reader = new pdfViewer((Pdf) prcBook);
-                reader.getStage().showAndWait();
+                ((Pdf) prcBook).showPdf((Pdf)prcBook);
                 viewerWindow = false;
             } else if (prcBook instanceof EPub) {
                 ((EPub) prcBook).showReader();
@@ -284,13 +340,18 @@ public class Gui {
         }
     }
 
+    /**
+     * imposta la funzione del bottone Remove
+     */
     public void settingRemoveBook(){
         if (prcBook != null){
             library.removeBook(prcBook);
             removeBookToGui(prcBook);
         }
     }
-
+    /**
+     * imposta la funzione del bottone Save
+     */
     public void settingSaveButton() {
         FileChooser fs = new FileChooser();
         fs.setTitle("Save library");
@@ -306,6 +367,9 @@ public class Gui {
         }
     }
 
+    /**
+     * imposta la funzione del bottone Load
+     */
     public void settingLoadButton() {
         FileChooser fs = new FileChooser();
         fs.setTitle("Load library");
@@ -323,6 +387,9 @@ public class Gui {
         }
     }
 
+    /**
+     * imposta la funzione del bottone Add
+     */
     public void settingAddButton() {
         FileChooser fs = new FileChooser();
         fs.setTitle("Choose one or more Books");
@@ -342,6 +409,9 @@ public class Gui {
             });
     }
 
+    /**
+     * imposta la funzione della barra di ricerca
+     */
     public void settingSearchText(KeyEvent event) {
         if (!library.getCollection().isEmpty()) {
             if (!textField.getText().equals("")) {
