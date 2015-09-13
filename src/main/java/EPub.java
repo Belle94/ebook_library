@@ -3,6 +3,7 @@ import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Metadata;
 import nl.siegmann.epublib.epub.EpubReader;
 import nl.siegmann.epublib.epub.EpubWriter;
+import nl.siegmann.epublib.viewer.Viewer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -87,7 +88,9 @@ public class EPub extends Book {
             EpubReader epubReader = new EpubReader();
             nl.siegmann.epublib.domain.Book epub = epubReader.readEpub(new FileInputStream(getFilePath()));
             Metadata metadata = epub.getMetadata();
-            metadata.setAuthors(new ArrayList<Author>(){{add(new Author(author));}});
+            metadata.setAuthors(new ArrayList<Author>() {{
+                add(new Author(author));
+            }});
             epub.setMetadata(metadata);
             EpubWriter epubWriter = new EpubWriter();
             epubWriter.write(epub, new FileOutputStream(new File(getFilePath())));
@@ -96,6 +99,13 @@ public class EPub extends Book {
             System.out.println("[ERROR] Epub not changed");
             System.out.println("[ERROR] Message: " + e.getMessage());
             System.out.println("[ERROR] Cause: " + e.getCause());
+        }
+    }
+    public void showReader(){
+        try {
+            new Viewer(new EpubReader().readEpub(new FileInputStream(getFilePath())));
+        } catch (IOException e) {
+            System.err.println("[Error]loading Epub:"+getFilePath());
         }
     }
 }

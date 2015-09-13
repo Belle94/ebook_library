@@ -22,7 +22,7 @@ public abstract class Book {
     public abstract int getTotalPage();
     public abstract void setTitle(String title);
     public abstract void setAuthor(String title);
-
+    public File getFile(){return file;}
     public String getFilePath() {return file.getAbsolutePath();}
     public void setPane(Pane pane){this.pane = pane;}
     public Pane getPane(){return pane;}

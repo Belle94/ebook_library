@@ -11,6 +11,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class Gui {
     private double prefHeight = 420.0;
     private Library library;
     private Book prcBook= null;
-    private boolean infoBookWindow = false;
+    private boolean infoBookWindow = false, viewerWindow = false;
 
     public Gui() {
         library = new Library();
@@ -177,7 +178,7 @@ public class Gui {
         borderPane.setBottom(labelFooter);
         borderPane.setLeft(vBox);
         borderPane.setCenter(scrollPane);
-        borderPane.setOnKeyTyped(event -> showInfoBookWindow());
+        borderPane.setOnKeyReleased(event -> { if (event.getCode() == KeyCode.ENTER)showInfoBookWindow();});
     }
 
     public void settingLabels() {
@@ -210,25 +211,31 @@ public class Gui {
     }
 
     public ArrayList<Button> settingButton() {
-        Button buttonAdd, buttonEdit, buttonRemove, buttonSave, buttonLoad, buttonPrint;
+        Button buttonAdd, buttonEdit, buttonRemove, buttonSave, buttonLoad, buttonPrint, buttonRead, buttonExternalRead;
         buttonAdd = new Button("Add");
         buttonEdit = new Button("Edit");
         buttonRemove = new Button("Remove");
         buttonSave = new Button("Save");
         buttonLoad = new Button("Load");
         buttonPrint = new Button("Print");
+        buttonRead = new Button("Read");
+        buttonExternalRead = new Button("Ext. Read");
         buttonAdd.setOnAction(event -> settingAddButton());
         buttonEdit.setOnAction(event -> showInfoBookWindow());
         buttonRemove.setOnAction(event -> settingRemoveBook());
         buttonSave.setOnAction(event -> settingSaveButton());
         buttonLoad.setOnAction(event -> settingLoadButton());
         buttonPrint.setOnAction(event -> library.print());
+        buttonRead.setOnAction(event -> settingReadButton());
+        buttonExternalRead.setOnAction(event1 -> settingExternalReadButton());
         ArrayList<Button> buttonsVbox = new ArrayList<>();
         buttonsVbox.add(buttonAdd);
         buttonsVbox.add(buttonEdit);
         buttonsVbox.add(buttonRemove);
         buttonsVbox.add(buttonSave);
         buttonsVbox.add(buttonLoad);
+        buttonsVbox.add(buttonRead);
+        buttonsVbox.add(buttonExternalRead);
         buttonsVbox.add(buttonPrint);
         for (Button b : buttonsVbox) {
             b.setFont(Font.font("Arial", FontWeight.BOLD, 14));
@@ -242,6 +249,39 @@ public class Gui {
             b.setOnMouseExited(event -> b.setStyle("-fx-background-color: #414041; -fx-border-color: #525052; -fx-border-width: 2px; -fx-border-radius: 2px;"));
         }
         return buttonsVbox;
+    }
+    
+    public void settingExternalReadButton(){
+        if (prcBook == null)
+            return;
+        FileChooser fs = new FileChooser();
+        fs.setTitle("Set external reader");
+        fs.setInitialDirectory(new File(System.getProperty("user.home")));
+        fs.getExtensionFilters().add(new FileChooser.ExtensionFilter("Exe Files", "*.exe"));
+        fs.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
+        File file =fs.showOpenDialog(new Stage());
+        if (file != null){
+            try{
+                Runtime.getRuntime().exec(file.getAbsolutePath() +" " +prcBook.getFilePath());
+            }catch (IOException e){
+                System.err.println("[Error] External Program didn't run");
+            }
+        }
+    }
+
+    public void settingReadButton() {
+        if (!viewerWindow) {
+            if (prcBook == null)
+                return;
+            if (prcBook instanceof Pdf) {
+                viewerWindow = true;
+                pdfViewer reader = new pdfViewer((Pdf) prcBook);
+                reader.getStage().showAndWait();
+                viewerWindow = false;
+            } else if (prcBook instanceof EPub) {
+                ((EPub) prcBook).showReader();
+            }
+        }
     }
 
     public void settingRemoveBook(){
