@@ -7,16 +7,16 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.print.PrinterJob;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.io.File;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -153,10 +153,16 @@ public class Library {
         print.setOnAction(event -> {
             stage.close();
             PrinterJob printerJob = PrinterJob.createPrinterJob();
-            if (printerJob.showPrintDialog(stage.getOwner()) && printerJob.printPage(tableView))
-                printerJob.endJob();
+            if (printerJob != null && printerJob.showPrintDialog(stage.getOwner()) && printerJob.printPage(tableView))
+                try {
+                    printerJob.endJob();
+                } catch (NullPointerException e) {
+                    new Alert(Alert.AlertType.ERROR, "Printing error", ButtonType.CLOSE).showAndWait();
+                }
+            else
+                new Alert(Alert.AlertType.ERROR, "No Printer Found", ButtonType.CLOSE).showAndWait();
         });
         cancel.setOnAction(event -> stage.close());
-        stage.show();
+            stage.show();
+        }
     }
-}

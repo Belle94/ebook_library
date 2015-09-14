@@ -362,7 +362,7 @@ public class Gui {
             try {
                 library.saveLibrary(file);
             } catch (SQLException | ClassNotFoundException e) {
-                new Alert(Alert.AlertType.ERROR, "Lirary not saved", ButtonType.OK);
+                new Alert(Alert.AlertType.ERROR, "Lirary not saved", ButtonType.OK).showAndWait();
             }
         }
     }
@@ -382,7 +382,7 @@ public class Gui {
                 clearGui();
                 addBooksToGui(library.getCollection());
             }catch (SQLException | ClassNotFoundException e){
-                new Alert(Alert.AlertType.ERROR, "Lirary not loaded",ButtonType.OK);
+                new Alert(Alert.AlertType.ERROR, "Lirary not loaded",ButtonType.OK).showAndWait();
             }
         }
     }
