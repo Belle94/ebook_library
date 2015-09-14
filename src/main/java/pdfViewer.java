@@ -10,6 +10,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.pdfbox.PDFBox;
 import org.apache.pdfbox.pdfviewer.PDFPagePanel;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -31,6 +32,7 @@ public class pdfViewer {
     private PDFPagePanel pagePanel;
     private SwingNode pagePanelFx;
     private Label pageLabel;
+    private BorderPane pdfBox;
 
     /**
      * Costruttore
@@ -101,14 +103,14 @@ public class pdfViewer {
     }
 
     /**
-     * visualizza la pagina presa in input se non è fuori range
+     * visualizza la pagina presa in input se non ï¿½ fuori range
      * @param page pagina da leggere
      */
     public void readEbook(int page) {
         if (page <= lastPage && page >= firstPage){
             this.page = page;
             pagePanel.setPage((PDPage) pdPagesList.get(page));
-            pagePanel.repaint();
+            repaint();
             updateTextLabel();
         }
     }
@@ -117,8 +119,7 @@ public class pdfViewer {
      * configura il layout del pdf-viewer
      */
     public void settingLayout(){
-        double width,height;
-        BorderPane pdfBox = new BorderPane();
+        pdfBox = new BorderPane();
         ScrollPane scrollPane = new ScrollPane();
         VBox container = new VBox();
         VBox containerTop = new VBox();
@@ -137,17 +138,13 @@ public class pdfViewer {
         previousButton.setMinWidth(70);
         nextButton.setOnAction(event -> readEbook(page+1));
         previousButton.setOnAction(event -> readEbook(page-1));
-        width = 600 ;
-        height = 850 ;
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setPrefSize(width, height);
         scrollPane.setContent(pdfBox);
         pdfBox.setCenter(pagePanelFx);
-        pdfBox.setPrefSize(width, height);
         hBox.getChildren().addAll(previousButton, pageLabel, nextButton);
         containerTop.getChildren().addAll(titleLabel, hBox);
         container.getChildren().addAll(containerTop, scrollPane);
-        pagePanel.repaint();
+        repaint();
         primaryStage.setScene(new Scene(container));
     }
 
@@ -156,5 +153,12 @@ public class pdfViewer {
      */
     public void updateTextLabel(){
         pageLabel.setText("Page: "+ (page+1));
+    }
+
+    public void repaint(){
+        int width = pagePanel.getWidth() ;
+        int height = pagePanel.getHeight() ;
+        pdfBox.setPrefSize(width, height);
+        pagePanel.repaint();
     }
 }
