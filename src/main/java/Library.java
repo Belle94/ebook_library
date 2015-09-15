@@ -14,9 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.io.File;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -80,6 +78,8 @@ public class Library {
      * @throws ClassNotFoundException
      */
     public void saveLibrary(File filePath) throws SQLException, ClassNotFoundException {
+        if(filePath.exists())
+            filePath.delete();
         openConnection(filePath.getAbsolutePath());
         for(Book book: collection) {
             dbBookDao.createIfNotExists(new DatabaseBook(book));

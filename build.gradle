@@ -3,6 +3,7 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'eclipse'
 apply plugin: 'application'
 
 mainClassName = 'Main'
@@ -14,6 +15,14 @@ repositories {
     }
 }
 
+jar{
+    manifest {
+        attributes 'Implementation-Title': 'ebook_library',
+                'Implementation-Version': version,
+                'Main-Class': mainClassName
+    }
+}
+
 idea {
     module {
         downloadSources = true
@@ -21,6 +30,7 @@ idea {
 }
 
 dependencies {
+
     compile 'org.apache.pdfbox:pdfbox:1.8.10'
     compile 'org.xerial:sqlite-jdbc:3.8.11'
     compile 'com.j256.ormlite:ormlite-jdbc:4.48'
