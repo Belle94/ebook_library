@@ -8,4 +8,4 @@
 ######3. run with [gradle](https://gradle.org/)
 `gradle run`
 
-#####Download jar snapshot [here](http://belle.ddns.net/ebook_library/)
+#####Download jar snapshot [here](https://dl.dropboxusercontent.com/u/15837908/ebook_library-1.0.jar)
